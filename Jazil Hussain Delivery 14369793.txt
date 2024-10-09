@@ -1,0 +1,96 @@
+create schema foodpanda;
+
+DROP TABLE IF EXISTS Customer;
+DROP TABLE IF EXISTS Customer_Order;
+DROP TABLE IF EXISTS Payment;
+DROP TABLE IF EXISTS Promotion;
+DROP TABLE IF EXISTS Rider;
+DROP TABLE IF EXISTS Basket;
+DROP TABLE IF EXISTS FoodItem;
+DROP TABLE IF EXISTS Restaurant;
+
+ 
+CREATE TABLE Customer 
+(CustomerID integer CHECK (CustomerID > 0), Email varchar(200), PhoneNo integer, Name text, 
+CONSTRAINT CustomerPK Primary Key (CustomerID));
+INSERT INTO Customer VALUES (1, 'fariskhel@hotmail.com', 0437777777, 'Faris Khelosy'),
+(2, 'jazil@hotmail.com', 0432339016, 'Jazil Hussain'),
+(3, 'tahag@hotmail.com', 0429644577, 'Taha G'), 
+(4, 'uzair2@gmail.com', 0423356372, 'Uzair Kidwa');
+
+
+CREATE TABLE Customer_Order 
+(OrderID integer, OrderDate varchar(20), CustomerID integer, PickupTime varchar(20), 
+CONSTRAINT Customer_OrderPK Primary Key (OrderID),
+CONSTRAINT Customer_OrderFK Foreign Key (CustomerID) References Customer (CustomerID));
+INSERT INTO Customer_Order VALUES (420, '27-07-2022', 1, '1:29am'),
+(167, '30-04-2022', 2, '3:42pm'),
+(125, '03-04-2022', 3, '4:00pm'),
+(140, '10-04-2022', 4, '11:00am');
+
+
+CREATE TABLE Payment 
+(PaymentID varchar(20), CustomerID integer, OrderID integer, PaymentType varchar(20) CHECK (PaymentType IN ('Debit Card', 'Cash')) , TotalAmount varchar(20),
+CONSTRAINT PaymentPK Primary Key (PaymentID),
+CONSTRAINT PaymentFK Foreign Key (CustomerID) REFERENCES Customer (CustomerID) ON DELETE CASCADE,
+CONSTRAINT PaymentFK2 Foreign Key (OrderID) References Customer_Order (OrderID) ON DELETE CASCADE);
+INSERT INTO Payment VALUES ('7b235', 1, 420, 'Debit Card', 750),
+('9014d', 2, 167, 'Debit Card', 1575 ),
+('9980a', 3, 125, 'Debit Card', 3650 ),
+('fac59', 4, 140, 'Cash', 1270);
+
+
+CREATE TABLE Promotion
+(PromotionID varchar(20),PromotionAmount integer,PromotionType char(20) CHECK (PromotionType IN ('Coupon', 'Referral')),PromotionDuration varchar(20),
+CONSTRAINT PromotiontPK Primary Key (PromotionID));
+INSERT INTO Promotion VALUES ('xxy', 100, 'Coupon', '31-07-2022'),
+('si2', 250, 'Coupon', '30-06-2022'),
+('29d', 500, 'Referral', '31-12-2022'),
+('28h', 0, 'Coupon', '30-04-2022');
+
+
+CREATE TABLE Rider
+(DeliveryID varchar(200), ArrivalTime varchar(200), DeliveryTime varchar(20), DeliveryCharge integer,
+CONSTRAINT RiderPK Primary Key (DeliveryID));
+INSERT INTO Rider VALUES ('f0c6b590-0bd6-4c66-8872', '2:00am', '31 minutes', 50),
+('sfn23729-3ryg-27nd-1287','4:30pm', '48 minutes', 75),
+('rh38nd33-7enh-82j1-2831', '4:45pm', '45 minutes', 50),
+('fh382nd2-12bs-72bd-3711', '11:35pm', '35 minutes', 70);
+
+
+CREATE TABLE FoodItem
+(FoodID varchar(20), Name text, Description varchar(500), ItemCategory text, Price integer,
+CONSTRAINT FoodItemPK Primary Key (FoodID));
+INSERT INTO FoodItem VALUES ('fh423', 'Chicken Tikka', 'The all-time favorite chicken Tikka sub. Customize it with whatever cheese or veggies you want and have a flavor blast.', 'Sandwiches', 700),
+('pl948', 'Chicken Biryani', 'Chicken Biryani Serving for 2 persons', 'Biryani', 750),
+('ah774', 'Margherita', 'Classic mozzarella cheese & tomato base.', 'Pizza', 1200),
+('ys615', 'Chicken Karahi', 'Made from a base of ginger, garlic and tomatoes and also contain fresh green chillis, julienne-cut raw ginger and coriander.', 'Karahi', 600);
+
+
+CREATE TABLE Basket
+(BasketID integer, OrderID integer, FoodID varchar(20),Quantity integer,UnitCost integer,TotalCost integer,
+CONSTRAINT BasketPK Primary Key (BasketID),
+CONSTRAINT BasketFK Foreign Key (OrderID) REFERENCES Customer_Order (OrderID) ON DELETE CASCADE,
+CONSTRAINT BasketFK2 Foreign Key (FoodID) REFERENCES FoodItem (FoodID) ON DELETE CASCADE);
+INSERT INTO Basket VALUES (1452, 420, 'fh423', 1, 700, 700),
+(3622, 167, 'pl948', 2, 750, 1500),
+(2373, 125, 'ah774', 3, 1200, 3600),
+(1727, 140, 'ys615', 2, 600, 1200);
+
+
+CREATE TABLE Restaurant
+(RestaurantID integer, Name text, Location varchar(200), OpeningTime varchar(200), ClosingTime varchar(200),
+CONSTRAINT RestaurantPK Primary Key (RestaurantID));
+INSERT INTO Restaurant VALUES (22, 'Subway', 'Phase 6, DHA, Karachi, Pakistan', '8:00am', '10:00pm'),
+(53, 'Biryani Express', 'Phase 2, DHA, Karachi, Pakistan', '9:00am', '10:00pm'),
+(104, 'Pizza Hut', 'Khayanban-e-Shahbaz, Karachi, Pakistan', '9:00am', '10:00pm'),
+(67, 'Desi Master Foods', 'Phase 6, DHA, Karachi, Pakistan', '8:00am', '11:00pm');
+
+
+
+
+
+
+
+
+
